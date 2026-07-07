@@ -30,8 +30,9 @@ things move — this is the single place to see where everything stands.
 
 ## 2. Roadmap (from [PLATFORM.md](PLATFORM.md))
 
-- **Phase 0 — Foundation** ⬜
-  - ⬜ Stand up standalone Keycloak (own deploy + DB, hardened)
+- **Phase 0 — Foundation** 🟡
+  - ✅ Execution scoped ([docs/phase-0-execution.md](docs/phase-0-execution.md)) — owner split + decisions
+  - 🟡 Keycloak: local dev scaffolded ([identity/dev/](identity/dev/)) · ⬜ prod stand-up (needs host + domain)
   - ⬜ Deploy CIT backend (currently local-only; see CIT `.do/app.yaml`)
   - ⬜ Monorepo scaffold (pnpm + Turborepo) + Expo skeleton
   - ⬜ Port CIT themes → reusable a11y-first `ui` primitives
