@@ -41,10 +41,12 @@ things move — this is the single place to see where everything stands.
   - ⬜ OIDC clients + scopes on Keycloak
   - ⬜ `packages/auth` PKCE login + secure token storage
   - ⬜ Step-up (ACR) policy defined
-- **Phase 2 — CIT as resource server** ⬜
-  - 🟡 Token-exchange spec (CIT `docs/mobile/auth-token-exchange.md`) — reconciled with the corrected login-path seam (Keycloak-hosted login, not RFC 8693, pairwise `sub`); on branch, PR pending
-  - ⬜ Swap the **login path** (`login`/`signup` + OIDC callback) to Keycloak-verify → `createSession()`; per-request guard, ~30 routes, and 7 Server Components stay unchanged
-  - ⬜ Keep rate-limiting / revocation / timing-equalized login
+- **Phase 2 — CIT as resource server** 🟡
+  - ✅ Token-exchange spec (CIT `docs/mobile/auth-token-exchange.md`) — reconciled with the login-path seam
+  - 🟡 `POST /api/auth/session` implemented — branch `feat/oidc-session-endpoint` (draft PR), 177 tests green. Verifies Keycloak OIDC (JWKS, `iss`/`aud`/`azp`), pairwise `oidcSub`, mints CIT session; `getSessionToken()` accepts Bearer. Inert until `KEYCLOAK_ISSUER`/`KEYCLOAK_CLIENT_ID` set. Guard/routes/middleware unchanged.
+  - ✅ Rate-limiting / revocation / timing-equalized login preserved (OIDC-only accounts guarded in login + delete)
+  - ⬜ Retire the password login path once Keycloak is live; wire the OIDC **step-up** for delete/export/regimen
+  - ⬜ Test end-to-end against the local dev Keycloak ([identity/dev/](identity/dev/))
 - **Phase 3 — Rebuild CIT in Expo** ⬜
   - ⬜ Rebuild 7 screens + 3 auth flows in RN
   - ⬜ Re-run a11y gates to parity (VoiceOver + TalkBack)
