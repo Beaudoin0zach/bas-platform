@@ -10,6 +10,7 @@ repos (a governance **org**, not a mono-repo — trust boundary = repo boundary)
 
 ## What's here
 
+- **[TRACKER.md](TRACKER.md)** — living status board: every repo, the PR rollout, roadmap, and open blockers. Start here.
 - **[PLATFORM.md](PLATFORM.md)** — the architecture: standalone Keycloak identity,
   layered sessions, the shared Expo/RN-Web design system, sequencing.
 - **[INVARIANTS.md](INVARIANTS.md)** — the five platform invariants, enforced by construction.
