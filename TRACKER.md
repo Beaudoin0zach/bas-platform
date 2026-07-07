@@ -12,18 +12,18 @@ things move — this is the single place to see where everything stands.
 
 | App | Platform role | Stack | Remote | CLAUDE.md pointer | Onboarding |
 |---|---|---|---|---|---|
-| **Chronic Illness Tracker** | App #1 (PHI) | Next.js + Postgres | `kbeaudoin001/Chronic-Illness-Tracker` | ✅ pushed (PR open) | 🟡 leading |
-| **KindredAccess** | App #2 | Django + Channels | `Beaudoin0zach/kindredaccess` | ✅ pushed (PR open) | ⬜ |
-| **Benefits Navigator** | Candidate (sensitive) | Django + AI | `Beaudoin0zach/benefits_navigator` | ✅ pushed (PR open) | ⬜ |
-| **Access Atlas** (access-directory) | Candidate | Astro | ⏳ **no remote** | 🟡 committed locally | ⬜ |
+| **Chronic Illness Tracker** | App #1 (PHI) | Next.js + Postgres | `kbeaudoin001/Chronic-Illness-Tracker` | ✅ branch pushed · ⬜ PR not opened | 🟡 leading |
+| **KindredAccess** | App #2 | Django + Channels | `Beaudoin0zach/kindredaccess` | ✅ branch pushed · ⬜ PR not opened | ⬜ |
+| **Benefits Navigator** | Candidate (sensitive) | Django + AI | `Beaudoin0zach/benefits_navigator` | ✅ branch pushed · ⬜ PR not opened | ⬜ |
+| **Access Atlas** (access-directory) | Member (identity) | Astro | `Beaudoin0zach/access-atlas` | ✅ on `main` (no PR needed) | 🟡 onboarded (identity pending) |
 | **a11y-probe** | Standalone / CI a11y | Reddit Devvit | none | ⏳ untracked (unborn repo) | n/a |
-| **page-repair** | Standalone; patterns → `ui` | Browser extension | `LangworthyWatch/page-repair` | ✅ pushed (PR open) | n/a |
+| **page-repair** | Standalone; patterns → `ui` | Browser extension | `LangworthyWatch/page-repair` | ✅ branch pushed · ⬜ PR not opened | n/a |
 | **Marketing site** | Company site (not a platform app) | Astro + Netlify | local only (unpushed) | — | n/a |
 
-**Pointer-PR rollout — open the PRs:**
+**Pointer-PR rollout — branches pushed, but no PRs opened yet.** Open them here:
 - CIT — <https://github.com/kbeaudoin001/Chronic-Illness-Tracker/compare/fix/security-audit-batch-4...docs/bas-platform-pointer>
 - KindredAccess — <https://github.com/Beaudoin0zach/kindredaccess/compare/main...docs/bas-platform-pointer>
-- Benefits Navigator — <https://github.com/Beaudoin0zach/benefits_navigator/compare/feat/anthropic-migration...docs/bas-platform-pointer>
+- Benefits Navigator — <https://github.com/Beaudoin0zach/benefits_navigator/compare/main...docs/bas-platform-pointer>
 - page-repair — <https://github.com/LangworthyWatch/page-repair/compare/main...docs/bas-platform-pointer>
 
 ---
@@ -87,9 +87,9 @@ things move — this is the single place to see where everything stands.
 
 ## 5. Open items / blockers
 
-- ⏳ **access-directory needs a git remote** before its pointer commit can push.
+- ✅ **access-directory (Access Atlas) now has a remote** — `Beaudoin0zach/access-atlas` (public), onboarded on `main` with a governance pointer + inlined invariants (`docs/platform-membership.md`). Scoped as a full identity member: browsing stays account-free; identity gates contribution only; browsing surface stays Astro/zero-JS (no RN rewrite).
 - ⏳ **a11y-probe is an unborn repo** (0 commits, no remote); pointer sits untracked until it's initialized.
-- ⬜ **Merge the four pointer PRs** (links in §1).
+- ⬜ **Open + merge the four pointer PRs** — branches are pushed but **no PR is open yet**; use the compare links in §1 to open them.
 - ✅ **Push governance repo** — done (`main` live).
 - ⬜ **Cross-app correlation** — adopt pairwise `sub` ([ADR-003](docs/adr/003-pairwise-subject-identifiers.md)) before any app stores a shared identifier.
 - ⬜ **Existing-user migration** into Keycloak ([ADR-004](docs/adr/004-existing-user-migration.md)) — CIT reference runbook, then KA + Benefits Navigator.

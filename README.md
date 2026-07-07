@@ -29,7 +29,7 @@ repos (a governance **org**, not a mono-repo — trust boundary = repo boundary)
 | Chronic Illness Tracker (CIT) | Next.js + Postgres (PHI) | **App #1** — resource server, mints its own data-access session |
 | KindredAccess | Django + Channels | **App #2** — resource server; its 2FA informs step-up |
 | VA Benefits Navigator | Django + AI | Candidate member; sensitive data → same PHI treatment |
-| Access Atlas (access-directory) | Astro | Candidate member; federates to Keycloak if it adopts SSO |
+| Access Atlas (access-directory) | Astro | **Identity member** — Keycloak gates *contribution* (pseudonymous); browsing stays account-free; zero-JS surface, no RN rewrite. Repo `Beaudoin0zach/access-atlas` |
 | a11y-probe | Reddit Devvit | Likely standalone; can feed shared CI a11y gates |
 | page-repair | Browser extension | Not an identity member; patterns inform shared `ui` |
 | Marketing site | Astro + Netlify | beauaccesssolutions.com — company site, not a platform app |
