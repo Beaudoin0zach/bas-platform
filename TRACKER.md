@@ -61,9 +61,12 @@ things move — this is the single place to see where everything stands.
 
 ## 3. Identity service (Keycloak) — [ADR-001](docs/adr/001-platform-architecture-and-identity.md)
 
+Setup & hardening steps live in **[docs/keycloak-setup-and-hardening.md](docs/keycloak-setup-and-hardening.md)** (drafted, not yet executed).
+
 - ✅ Decision: standalone, self-hosted Keycloak
+- ✅ Stand-up + hardening checklist drafted ([keycloak-setup-and-hardening.md](docs/keycloak-setup-and-hardening.md))
 - ⬜ Instance stood up (own DB, own deploy)
-- ⬜ Hardening checklist (admin-console lockdown, patching cadence)
+- ⬜ Hardening executed (admin-console lockdown, patching cadence)
 - ⬜ Login theme re-themed to pass WCAG 2.2 AA
 - ⬜ OIDC clients per app + `aud`/`azp` isolation
 - ⬜ Pairwise subject identifiers per client ([ADR-003](docs/adr/003-pairwise-subject-identifiers.md))
