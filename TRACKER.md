@@ -45,6 +45,7 @@ things move — this is the single place to see where everything stands.
 - **Phase 2 — CIT as resource server** 🟡
   - ✅ Token-exchange spec (CIT `docs/mobile/auth-token-exchange.md`) — reconciled with the login-path seam
   - 🟡 `POST /api/auth/session` implemented — branch `feat/oidc-session-endpoint` (draft PR), 177 tests green. Verifies Keycloak OIDC (JWKS, `iss`/`aud`/`azp`), pairwise `oidcSub`, mints CIT session; `getSessionToken()` accepts Bearer. Inert until `KEYCLOAK_ISSUER`/`KEYCLOAK_CLIENT_ID` set. Guard/routes/middleware unchanged.
+  - ✅ **Branch reconciliation done** — a divergent duplicate (`feat/oidc-resource-server`, `keycloakSub`) was salvage-checked and deleted. It lacked the OIDC tests **and** the `azp` sibling-app-token rejection + clock-tolerance the canonical branch has, so nothing to cherry-pick (optional tiny follow-up: canonical could also read the `name` claim to seed `User.name`). `feat/oidc-session-endpoint` is the single canonical OIDC branch.
   - ✅ Rate-limiting / revocation / timing-equalized login preserved (OIDC-only accounts guarded in login + delete)
   - ⬜ Retire the password login path once Keycloak is live; wire the OIDC **step-up** for delete/export/regimen
   - ⬜ Test end-to-end against the local dev Keycloak ([identity/dev/](identity/dev/))
