@@ -14,7 +14,7 @@ things move — this is the single place to see where everything stands.
 |---|---|---|---|---|---|
 | **Chronic Illness Tracker** | App #1 (PHI) | Next.js + Postgres | `kbeaudoin001/Chronic-Illness-Tracker` | ✅ branch pushed · ⬜ PR not opened | 🟡 leading |
 | **KindredAccess** | App #2 | Django + Channels | `Beaudoin0zach/kindredaccess` | ✅ branch pushed · ⬜ pointer PR not opened | 🟡 OIDC RP integrated ahead of seq. (PR #4) |
-| **Benefits Navigator** | Candidate (sensitive) | Django + AI | `Beaudoin0zach/benefits_navigator` | ✅ branch pushed · ⬜ PR not opened | ⬜ |
+| **Benefits Navigator** | Candidate (sensitive) → Member pending [ADR-005](docs/adr/005-benefits-navigator-data-posture.md) | Django + AI | `Beaudoin0zach/benefits_navigator` | ✅ pointer [PR #23](https://github.com/Beaudoin0zach/benefits_navigator/pull/23) open | 🟡 membership doc [PR #24](https://github.com/Beaudoin0zach/benefits_navigator/pull/24) open |
 | **Access Atlas** (access-directory) | Member (identity) | Astro | `Beaudoin0zach/access-atlas` | ✅ pointer on `main` · 🟡 invariant branch pushed, PR not opened | 🟡 onboarded · invariants #2/#3/#4 ✅ · identity #1/#5 ⏳ |
 | **a11y-probe** | Standalone / CI a11y | Reddit Devvit | none | ⏳ untracked (unborn repo) | n/a |
 | **page-repair** | Standalone; patterns → `ui` | Browser extension | `LangworthyWatch/page-repair` | ✅ branch pushed · ⬜ PR not opened | n/a |
@@ -23,7 +23,7 @@ things move — this is the single place to see where everything stands.
 **Pointer-PR rollout — all four are now clean one-commit branches off `main`, ready to open.** Open them here:
 - CIT — <https://github.com/kbeaudoin001/Chronic-Illness-Tracker/compare/main...docs/bas-platform-pointer> (rebased onto main + squashed)
 - KindredAccess — <https://github.com/Beaudoin0zach/kindredaccess/compare/main...docs/bas-platform-pointer> (direct merge-to-main blocked by safety classifier — open the PR, or add a Bash permission rule)
-- Benefits Navigator — <https://github.com/Beaudoin0zach/benefits_navigator/compare/main...docs/bas-platform-pointer> (rebased onto main)
+- Benefits Navigator — ✅ **[pointer PR #23](https://github.com/Beaudoin0zach/benefits_navigator/pull/23) open** (awaiting review; merge BLOCKED by branch protection) · ✅ **[membership doc PR #24](https://github.com/Beaudoin0zach/benefits_navigator/pull/24) open**
 - page-repair — <https://github.com/LangworthyWatch/page-repair/compare/main...docs/bas-platform-pointer> (third-party repo)
 
 ---
@@ -141,7 +141,7 @@ Setup & hardening steps live in **[docs/keycloak-setup-and-hardening.md](docs/ke
 - 🟡 **KindredAccess OIDC integration** (2026-07-08) — Django resource server done and verified end-to-end vs dev Keycloak (branch `feat/bas-keycloak-oidc`, KA PR #4). Stores a pairwise `sub` on a new `KeycloakIdentity` model; inert until configured. While verifying, **fixed the dev-realm pairwise mapper** in `identity/dev/realm/bootstrap.sh` for **both** `cit-web` and `kindredaccess-web` — the reference used `oidc-sub-mapper` (non-pairwise, sub = raw user id) instead of `oidc-sha256-pairwise-sub-mapper`. Separately, KA's WebSocket deploy config was corrected (Gunicorn+Daphne, KA PR #3). ⬜ Existing-user migration for KA still pending (below).
 - 🟡 **Cross-app correlation** — adopt pairwise `sub` ([ADR-003](docs/adr/003-pairwise-subject-identifiers.md)) before any app stores a shared identifier. **KA now stores a pairwise sub (verified in dev).** ⬜ enforce for `cit-web` and in prod (needs sector-identifier/salt strategy).
 - ⬜ **Existing-user migration** into Keycloak ([ADR-004](docs/adr/004-existing-user-migration.md)) — CIT reference runbook, then KA + Benefits Navigator. (KA code links legacy accounts by verified email at first login; the Keycloak-side import/hash step is still unbuilt.)
-- ⏳ **Benefits Navigator data posture** — veteran data may carry Privacy Act / VA obligations distinct from HIPAA; determine like CIT's HIPAA question.
+- 🟡 **Benefits Navigator data posture** — framed in [ADR-005](docs/adr/005-benefits-navigator-data-posture.md); BN is engineered conservatively to full-Member spec, but stays **Candidate** pending a **BAS LLC legal determination** (38 U.S.C. §5701 / 38 CFR §§1.500–1.527 / Privacy Act flow-down vs HIPAA). This is the one item gating Candidate → Member — a decision, not code.
 - 🟡 **page-repair store submission prepared** — v1.0.0 release manifest, icons, [PRIVACY.md](repos/page-repair/PRIVACY.md), [STORE_LISTING.md](repos/page-repair/STORE_LISTING.md), and `dist/page-repair.zip` are ready; **not submitted** (needs a Chrome Web Store dev account + real-page screenshots). Changes are uncommitted in the working tree.
 - ⏳ **page-repair proxy inert** — Cloudflare Worker is live but needs `wrangler secret put ANTHROPIC_API_KEY` (+ a redeploy of the pending health-route change) before paid labeling works.
 - ⬜ **Marketing-site GitHub repo name** — governance owns `Beau-Access-Solutions`; the site needs a different repo name (e.g. `bas-website`) when pushed.
@@ -157,5 +157,6 @@ Setup & hardening steps live in **[docs/keycloak-setup-and-hardening.md](docs/ke
 - [ADR-002](docs/adr/002-umbrella-org-and-repo-topology.md) — BAS umbrella, repo topology, no committed cross-repo symlinks
 - [ADR-003](docs/adr/003-pairwise-subject-identifiers.md) — pairwise subject identifiers (no cross-app correlation)
 - [ADR-004](docs/adr/004-existing-user-migration.md) — migrating existing users into Keycloak
+- [ADR-005](docs/adr/005-benefits-navigator-data-posture.md) — Benefits Navigator data posture (Privacy Act / VA vs HIPAA)
 - CIT `docs/adr/004` — CIT-side pointer to the identity decision
 - CIT `docs/mobile/PLAN.md` — native build plan; `docs/mobile/auth-token-exchange.md` — token-exchange spec
