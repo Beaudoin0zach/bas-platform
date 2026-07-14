@@ -36,23 +36,42 @@ what gets shipped; "Trigger" = how a deploy happens.
 
 | App | Artifact | Host / platform | Config source | Trigger | URL / DNS | Status |
 |---|---|---|---|---|---|---|
-| **Chronic Illness Tracker** | Next.js web + managed Postgres 17 | **DigitalOcean App Platform** (region `nyc`, `basic-xxs`) | [`.do/app.yaml`](repos/chronic-illness-tracker/.do/app.yaml) — repo `Beaudoin0zach/Chronic-Illness-Tracker`, health `/api/health`, pre-deploy `prisma migrate deploy` | `deploy_on_push` on `main` | ⬜ no domain yet | ⬜ **not deployed** (spec ready) |
+| **Chronic Illness Tracker** | Next.js web + managed Postgres 17 | **DigitalOcean App Platform** (region `nyc`, `basic-xxs`) | [`.do/app.yaml`](repos/chronic-illness-tracker/.do/app.yaml) — repo `Beaudoin0zach/Chronic-Illness-Tracker`, health `/api/health`, pre-deploy `prisma migrate deploy` | `deploy_on_push` on `main` | 🟢 <https://chronic-illness-tracker-7o7fw.ondigitalocean.app> | 🟢 **live** (auto-deploys `main`) · also the API backend the **Baseline** iOS app calls — see §2b |
 | **Benefits Navigator** | Django + Celery + Redis | **DigitalOcean App Platform** (region NYC, App ID `2119eba2-07b6-405f-a962-d40dd6956137`) | [`DEPLOYMENT.md`](repos/benefits-navigator/DEPLOYMENT.md), `Dockerfile.prod` | git push | 🟢 <https://benefits-navigator-staging-3o4rq.ondigitalocean.app> | 🟡 **staging live** · ⬜ prod |
-| **KindredAccess** | Django web backend + Capacitor mobile shell | **DigitalOcean Droplet** (Ubuntu 22.04, $12–18/mo) | [`DIGITAL_OCEAN_DEPLOYMENT.md`](repos/kindredaccess/DIGITAL_OCEAN_DEPLOYMENT.md) + `deploy/` systemd units (Gunicorn HTTP + **Daphne WebSockets**, nginx `/ws/` routing) — KA PR #3 | manual (SSH) | ⬜ DNS TBD | ⬜ **not deployed** (WS deploy config now correct) |
-| **Access Atlas** (access-directory) | Astro static (zero-JS) + Supabase | ⏳ **undecided** — data entity/hosting is an org/legal call, not a code one (README §13) | none committed | — | ⬜ | ⏳ **host not chosen** |
+| **KindredAccess** | Django web backend + Capacitor mobile shell | **DigitalOcean Droplet** (Ubuntu 22.04, $12–18/mo) | [`DIGITAL_OCEAN_DEPLOYMENT.md`](repos/kindredaccess/DIGITAL_OCEAN_DEPLOYMENT.md) + `deploy/` systemd units (Gunicorn HTTP + **Daphne WebSockets**, nginx `/ws/` routing) — KA PR #3 | **manual (SSH)** — no auto-deploy | 🟢 <https://kindredaccess.org> | 🟢 **live** · the site the KindredAccess iOS wrapper loads (§2b). Manual deploy: `main` edits only reach the site + app after an SSH redeploy |
+| **Access Atlas** (access-directory) | Astro SSR (zero-JS surface) + Supabase | **DigitalOcean App Platform** (Dockerfile from GitHub) | [`.do/app.yaml`](repos/access-directory/.do/app.yaml) — repo `Beaudoin0zach/access-atlas`, `deploy_on_push: true` on `main` | `deploy_on_push` on `main` | 🟢 <https://access-atlas-qd464.ondigitalocean.app> | 🟢 **live** (deployed 2026-07-10, auto-deploys `main`) · the site the Access Atlas iOS wrapper loads (§2b) |
 | **a11y-probe** | Reddit Devvit app (client + server bundle) | **Reddit Devvit** platform | [`devvit.json`](repos/a11y-probe/devvit.json) | `devvit upload` / `publish` | Reddit-hosted | 🟡 **repo initialized** (`Beaudoin0zach/a11y-probe`, private) · ⬜ not published to Devvit |
 | **page-repair** (extension) | Browser extension (MV3) | **Chrome Web Store / AMO** | [`manifest.json`](repos/page-repair/manifest.json) v1.0.0 + icons · [`PRIVACY.md`](repos/page-repair/PRIVACY.md) · [`STORE_LISTING.md`](repos/page-repair/STORE_LISTING.md) · `dist/page-repair.zip` | store submission | store listing | 🟡 **submission-ready** · ⬜ not submitted (needs dev account + screenshots) |
 | **page-repair** (credit proxy) | Cloudflare Worker + KV + **Durable Object** (credits) | **Cloudflare Workers** | [`proxy/wrangler.jsonc`](repos/page-repair/proxy/wrangler.jsonc) | `wrangler deploy` (manual) | 🟢 <https://page-repair-proxy.airboat-webcast-5u.workers.dev> | 🟡 **live but inert** — `ANTHROPIC_API_KEY` secret unset. Atomic-credit `CreditsAccount` DO merged to `main` (2026-07-14); needs `wrangler dev` concurrency test + `wrangler types` regen before the next deploy, which must precede setting the API key |
 | **Marketing site** | Astro static | **Netlify** | [`netlify.toml`](repos/marketing-site/netlify.toml) — build `dist`, SPA redirect, security headers | Netlify git deploy | ⬜ | ⬜ **local only, unpushed** |
-| **Keycloak** (identity infra) | Self-hosted Keycloak + own DB | **DigitalOcean** (Droplet) | [docs/deploy/keycloak-digitalocean.md](docs/deploy/keycloak-digitalocean.md) | manual | ⬜ `id.<domain>` DNS TBD | ⬜ **prod not stood up** |
+| **Keycloak** (identity infra) | Self-hosted Keycloak + own DB | **DigitalOcean** (Droplet) | [docs/deploy/keycloak-digitalocean.md](docs/deploy/keycloak-digitalocean.md) | manual | 🟢 <https://id.kindredaccess.org/realms/bas> | 🟢 **prod live** — `bas` realm reachable; issuer used by the Baseline iOS app (`eas.json`) and OIDC clients |
 
 **What this shows:**
 
-- **DigitalOcean is the platform default** — CIT, Benefits Navigator, KindredAccess, and Keycloak all target DO (App Platform for the first two, Droplets for KA + Keycloak).
-- **What's actually live today:** Benefits Navigator **staging**, and the **page-repair credit proxy** (Cloudflare Worker) — though the proxy is inert until its `ANTHROPIC_API_KEY` secret is set. Everything else is spec-ready, unpushed, unborn, or undecided.
-- **Two genuinely open hosting decisions:** Access Atlas (blocked on an org/legal data-entity call) and the marketing site (needs a repo — governance owns `Beau-Access-Solutions`; site needs e.g. `bas-website` — then a Netlify connect).
-- **No production DNS is wired for anything yet**, including the `id.` subdomain Keycloak needs before OIDC can go live.
-- **Non-server distribution:** a11y-probe ships through Reddit's Devvit platform and page-repair through browser extension stores — neither is a host we operate.
+- **DigitalOcean is the platform default** — CIT, Benefits Navigator, KindredAccess, Access Atlas, and Keycloak all run on DO (App Platform for CIT/BN/Access Atlas, Droplets for KA + Keycloak).
+- **What's actually live today (verified 2026-07-14 via HTTP probes):** CIT web (`chronic-illness-tracker-7o7fw`), Access Atlas (`access-atlas-qd464`), KindredAccess (`kindredaccess.org`), Benefits Navigator **staging**, Keycloak **prod** (`id.kindredaccess.org`), and the page-repair credit proxy (inert until its API key is set). This is a big correction from prior versions of this doc, which listed most of these as "not deployed."
+- **Auto-deploy vs manual:** CIT, Access Atlas, and Benefits Navigator deploy on push to `main`; **KindredAccess and Keycloak are manual** (SSH to the Droplet) — KA edits on `main` don't reach the site (or the iOS wrapper) until someone redeploys.
+- **Production DNS is partially wired:** `kindredaccess.org` and `id.kindredaccess.org` are live; CIT/Access Atlas still use DO-generated hostnames (no custom domain yet).
+- **Still open:** the marketing site (needs a repo, then a Netlify connect); a11y-probe (Devvit publish); page-repair (store submission + proxy key).
+- **Non-server distribution:** a11y-probe → Reddit Devvit, page-repair → browser-extension stores, and the three **iOS apps → TestFlight** (§2b) — none are hosts we operate.
+
+---
+
+## 2b. iOS / TestFlight
+
+All three consumer apps are **on TestFlight today** — this is NOT the unstarted Phase 3/4 work the roadmap once implied. Full architecture + update runbook: [docs/mobile-and-testflight.md](docs/mobile-and-testflight.md).
+
+| App (TestFlight name) | Build type | Source repo (⚠ remote?) | Loads / contains | How an edit reaches testers |
+|---|---|---|---|---|
+| **Access Atlas** | Capacitor / WKWebView **wrapper** | `access-directory` (`capacitor.config.ts`) | the **live DO site** at runtime | redeploy the web app (auto on `main`) → relaunch app. **No new build** unless the native shell changes |
+| **KindredAccess** | Capacitor / WKWebView **wrapper** | **`kindredaccess-ios`** — ⚠ *no git remote (local only)* | **`kindredaccess.org`** at runtime | **SSH-redeploy** the site (manual) → relaunch app. No new build for content |
+| **Baseline** = CIT | **native Expo / React Native** (EAS) | **`bas-apps/apps/cit`** — ⚠ *no git remote (local only)* | native RN screens; calls the CIT API backend | **`eas update`** (OTA, JS-only, no rebuild) or **`eas build` + `eas submit`** (native changes). EAS Update channels configured |
+
+**Key facts:**
+- **Two of three are thin webview wrappers** — their "app" is really the hosted website. Edits ship by **web deploy**, not a TestFlight rebuild. Only native-shell changes (icon, splash, `server.url`, plugins, version bump) need a new build.
+- **Baseline (CIT) is the exception** — a genuine native app. Its own code edits need `eas update` (OTA) or a full `eas build` + submit. A server-side backend fix (like the AI date-range fix, 2026-07-14) reaches it only through the API, and only for features the native app actually has (it has **no AI-insights screen yet**).
+- ⚠ **Mobile source is unbacked:** `bas-apps` (19 commits — the Baseline app), `kindredaccess-ios`, `bas-frontend`, and the abandoned `access-atlas-mobile` have **no git remote** — local-only, lost if the machine dies. See §6.
+- **External-review blocker (Access Atlas):** a bare webview wrapper is rejected under App Store Guideline 4.2; internal TestFlight (≤100) is fine. Clearing external review needs the camera evidence-photo feature (`access-directory` runbook).
 
 ---
 
@@ -77,15 +96,16 @@ what gets shipped; "Trigger" = how a deploy happens.
   - ✅ Rate-limiting / revocation / timing-equalized login preserved (OIDC-only accounts guarded in login + delete)
   - ⬜ Retire the password login path once Keycloak is live; wire the OIDC **step-up** for delete/export/regimen
   - ⬜ Test end-to-end against the local dev Keycloak ([identity/dev/](identity/dev/))
-- **Phase 3 — Rebuild CIT in Expo** ⬜
-  - ⬜ Rebuild 7 screens + 3 auth flows in RN
+- **Phase 3 — Rebuild CIT in Expo** 🟡 **underway** (native app `bas-apps/apps/cit`, ships as **Baseline**; ⚠ repo has no remote — §6)
+  - 🟡 Rebuild 7 screens + 3 auth flows in RN — app builds, OIDC hosted-login against prod Keycloak, sign-in hardening landed (watchdog, idToken re-prompt). Not all CIT web features ported (e.g. **no AI-insights screen yet**)
   - ⬜ Re-run a11y gates to parity (VoiceOver + TalkBack)
   - ⬜ i18n reusing CIT `locales/*.json`
   - ⬜ In-app account deletion (Apple 5.1.1(v))
-- **Phase 4 — Ship to testers** ⬜
-  - ⬜ EAS Build → TestFlight + Play internal + web
+- **Phase 4 — Ship to testers** 🟡 **on TestFlight now** (§2b) — the reality this roadmap once marked "not started"
+  - 🟢 EAS Build → **TestFlight** — Baseline (CIT native) + the Access Atlas / KindredAccess webview wrappers are all on TestFlight; EAS Update (OTA) channels configured. ⬜ Play internal · ⬜ web
   - ⬜ Privacy nutrition labels / data-safety form
   - ⬜ Human-reviewed store copy (incl. Spanish)
+  - ⬜ External TestFlight for Access Atlas blocked on Guideline 4.2 (needs camera evidence feature)
 - **Phase 5 — Generalize** ⬜
   - 🟡 **KindredAccess OIDC RP done ahead of sequence** (2026-07-08) — Django resource server integrated with `mozilla-django-oidc` (confidential client + PKCE S256), verified end-to-end against the local dev Keycloak incl. a genuinely pairwise `sub`. Layered session (validate vs JWKS → mint Django session), verified-email linking (ADR-004), `azp` sibling-app rejection. Inert until `KEYCLOAK_ISSUER`/`OIDC_RP_CLIENT_ID` set. Branch `feat/bas-keycloak-oidc` (KA PR #4), 346 tests green. Existing-user migration + prod still pending — see §6.
   - ⬜ KindredAccess consumes shared packages (`ui`/`auth`)
@@ -99,10 +119,10 @@ Setup & hardening steps live in **[docs/keycloak-setup-and-hardening.md](docs/ke
 
 - ✅ Decision: standalone, self-hosted Keycloak
 - ✅ Stand-up + hardening checklist drafted ([keycloak-setup-and-hardening.md](docs/keycloak-setup-and-hardening.md))
-- ⬜ Instance stood up (own DB, own deploy)
-- ⬜ Hardening executed (admin-console lockdown, patching cadence)
-- ⬜ Login theme re-themed to pass WCAG 2.2 AA
-- 🟡 OIDC clients per app + `aud`/`azp` isolation — **dev:** `cit-web` + `kindredaccess-web` created in the `bas` realm; KA verified to reject a sibling `azp`. ⬜ prod
+- 🟢 **Instance stood up in PROD** — `https://id.kindredaccess.org/realms/bas` is live (verified 2026-07-14) and is the OIDC issuer the Baseline iOS app (`bas-apps/apps/cit/eas.json`) and web clients point at. (Supersedes the old "prod not stood up / DNS TBD".)
+- ⬜ Hardening executed (admin-console lockdown, patching cadence) — confirm against the checklist now that it's live
+- 🟡 Login theme re-themed to pass WCAG 2.2 AA — theme authored on `feat/identity-a11y-login-theme` (unmerged); confirm it's the one serving on prod
+- 🟡 OIDC clients per app + `aud`/`azp` isolation — `cit-web` + `kindredaccess-web` in the `bas` realm; KA rejects a sibling `azp`. Now exercised against **prod** (`id.kindredaccess.org`) by the live apps
 - 🟡 Pairwise subject identifiers per client ([ADR-003](docs/adr/003-pairwise-subject-identifiers.md)) — **dev:** working for `kindredaccess-web` (`oidc-sha256-pairwise-sub-mapper`, salted; sub ≠ raw user id, verified). Reference bootstrap corrected for both clients (was a no-op `oidc-sub-mapper`). ⬜ prod sector-identifier/salt strategy
 - ⬜ 2FA + step-up (ACR/LoA) policy
 - ⬜ DR: Keycloak DB backup/restore + token signing-key rotation + availability target
@@ -112,8 +132,10 @@ Setup & hardening steps live in **[docs/keycloak-setup-and-hardening.md](docs/ke
 
 ## 5. App Store / Play prerequisites (CIT first)
 
-- ⬜ Apple Developer Program — **$99/yr** (enrollment can take days — start early)
-- ⬜ Google Play Developer — **$25 one-time**
+> **Note:** all three apps are already on **TestFlight** (§2b), so the Apple side is further along than this list implied. CIT ships under the name **Baseline**.
+
+- 🟢 Apple Developer Program — **enrolled** (required for the TestFlight builds now live); `ascAppId` wired into `bas-apps/apps/cit` submit profile
+- ⬜ Google Play Developer — **$25 one-time** (no Android build yet)
 - ⬜ Published privacy policy URL (CIT has a `/privacy` route — publish it)
 - ✅ In-app account deletion reachable (Apple 5.1.1(v)) — CIT: `POST /api/auth/delete-account` (password + typed `DELETE`) wired to the Settings danger zone; real cascade + on-disk export purge
 - ⬜ App Privacy nutrition labels / Play data-safety form
@@ -137,7 +159,8 @@ Setup & hardening steps live in **[docs/keycloak-setup-and-hardening.md](docs/ke
   - ✅ **#3 decoupled delete/export** — complete, independently-callable workflow (`src/lib/data-rights.ts` + ops CLI, storage-aware, idempotent, unit-tested), keyed by contributor id so the Keycloak `sub` drops in unchanged. Self-service UI door deferred to the authenticated contribute milestone.
   - ✅ **#4 contribution boundary** — `.github/CODEOWNERS` on the write path, service-role client, identity seam, and safety-critical SQL (needs "Require review from Code Owners" toggled on in branch protection).
   - 🟡 **#1 layered sessions** now underway — a **drop-in Keycloak contributor auth (server-side BFF)** landed on the branch. ⏳ **#5 i18n** still pending Keycloak (Phase 0/1). Also on the branch: a WNY seed-data importer (creates self-reported data only).
-- ⏳ **a11y-probe is an unborn repo** (0 commits, no remote); pointer sits untracked until it's initialized.
+- ⚠️ **Mobile app source is unbacked — no git remote (found 2026-07-14).** The apps on TestFlight are built from **local-only** repos: `bas-apps` (19 commits — the **Baseline**/CIT native Expo app), `kindredaccess-ios` (the KA wrapper), `bas-frontend`, and the abandoned `access-atlas-mobile`. None have a remote, so they're lost if the machine dies. Decide repo names/visibility (like the a11y-probe call) and push. The Access Atlas + KindredAccess *web* wrapper configs live inside their already-pushed web repos, so those are safe; the standalone mobile repos are the exposure.
+- ✅ **a11y-probe repo initialized** — `Beaudoin0zach/a11y-probe` (private), `main` pushed (initial commit 2026-07-14). ⬜ still not published to Devvit.
 - ✅ **Pointer PRs merged** — CIT #1, KindredAccess #2, Benefits Navigator #23, and Access Atlas #1 are all **merged to `main`**; page-repair's remains unverifiable from this account (third-party `LangworthyWatch` repo).
 - ✅ **Push governance repo** — done (`main` live).
 - 🟡 **KindredAccess OIDC integration** (2026-07-08) — Django resource server done and verified end-to-end vs dev Keycloak (branch `feat/bas-keycloak-oidc`, KA PR #4). Stores a pairwise `sub` on a new `KeycloakIdentity` model; inert until configured. While verifying, **fixed the dev-realm pairwise mapper** in `identity/dev/realm/bootstrap.sh` for **both** `cit-web` and `kindredaccess-web` — the reference used `oidc-sub-mapper` (non-pairwise, sub = raw user id) instead of `oidc-sha256-pairwise-sub-mapper`. Separately, KA's WebSocket deploy config was corrected (Gunicorn+Daphne, KA PR #3). ⬜ Existing-user migration for KA still pending (below).

@@ -27,12 +27,25 @@ done
 
 # Known live deploy endpoints -> health-check URL. Extend as apps go live.
 # (case-based so it works on macOS's stock bash 3.2, which lacks `declare -A`.)
+# NOTE: the CIT / Access Atlas / KindredAccess URLs below are ALSO what the iOS
+# TestFlight builds load or call — see TRACKER.md §2b and docs/mobile-and-testflight.md.
 health_url() {
   case "$1" in
+    chronic-illness-tracker) echo "https://chronic-illness-tracker-7o7fw.ondigitalocean.app" ;;
+    access-directory)   echo "https://access-atlas-qd464.ondigitalocean.app" ;;
+    kindredaccess)      echo "https://kindredaccess.org" ;;
     benefits-navigator) echo "https://benefits-navigator-staging-3o4rq.ondigitalocean.app" ;;
     page-repair)        echo "https://page-repair-proxy.airboat-webcast-5u.workers.dev" ;;
     *) echo "" ;;
   esac
+}
+
+# Infra endpoints that aren't app repos under repos/ but are worth a health line.
+# Probed once at the end of the run (see the INFRA loop).
+infra_endpoints() {
+  cat <<'EOF'
+keycloak-prod https://id.kindredaccess.org/realms/bas
+EOF
 }
 
 slug() { # git remote url -> owner/repo
@@ -155,3 +168,14 @@ PY
     echo
   fi
 done
+
+# Infra endpoints that aren't app repos under repos/ (Keycloak prod, etc.).
+# Human output only; JSON consumers get the per-app lines above.
+if [ "$JSON" -ne 1 ]; then
+  printf '## infra\n'
+  infra_endpoints | while read -r name url; do
+    [ -n "$name" ] || continue
+    printf '   %-14s: HTTP %s %s\n' "$name" "$(health_probe "$url")" "$url"
+  done
+  echo
+fi
