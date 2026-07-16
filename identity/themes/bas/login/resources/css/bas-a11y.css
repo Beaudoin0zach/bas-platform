@@ -146,7 +146,7 @@ body#keycloak-bg,
   min-height: 44px;                             /* 2.5.8 target size aim */
   box-sizing: border-box;
   padding: 0.5rem 0.75rem;
-  font-size: 1rem;                              /* readable; avoids iOS zoom */
+  font-size: max(1rem, 16px);                   /* >=16px guaranteed — avoids iOS zoom regardless of root font-size */
   line-height: 1.5;
   color: var(--bas-text);
   background: transparent;
@@ -241,8 +241,10 @@ a:hover {
 
 /* ---------- Checkboxes (e.g. "Remember me", TOS) ---------- */
 .pf-v5-c-check__input {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.5rem;                                /* 24px — meets SC 2.5.8 min (was 20px) */
+  height: 1.5rem;
+  min-width: 24px;
+  min-height: 24px;
 }
 .pf-v5-c-check__label {
   color: var(--bas-text);
