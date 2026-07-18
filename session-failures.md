@@ -13,8 +13,10 @@ Append-only record of things that went wrong, so patterns become visible across 
 - **Wrong-platform assumption (Keycloak):** proposed "apply the bindable-DB pattern to the Keycloak
   app" and only discovered on inspection that Keycloak is Docker Compose on a droplet, not an App
   Platform app — bindable refs don't exist there → had to walk the recommendation back to the user.
-  Lesson: confirm *where* a service runs before recommending a platform-specific pattern; `doctl
-  apps list` was a 2-second check.
+  Lesson: confirm *where* a service runs before recommending a platform-specific pattern. **The
+  answer was already written down** — `TRACKER.md` §5's hosting table names Keycloak "DigitalOcean
+  (Droplet)". Read §5 before proposing any host-specific change; `doctl apps list` is the live
+  cross-check, not the primary source.
 - **`doctl apps update --format ActiveDeployment.Phase`:** `Error: unknown column` → the app *was*
   updated before the format error; re-queried deployment state with `doctl apps list-deployments`.
   Lesson: an output-format error can mask that the mutation already succeeded — check state, don't
