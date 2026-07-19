@@ -66,40 +66,23 @@ Gates audited 2026-07-18 by reading the tests; **partials marked**. CIT included
   hidden regions — regression gate, not a fix. *Unenforced:* BN, CIT.
   (kindredaccess, 2026-07-13; page-repair gate, 2026-07-18)
 
-- **C4 — color-scheme + contrast.** page-repair's options page declared no colors and no
-  `color-scheme`, so contrast held in light but was unverified in dark; a `kbd` border at `#999` was
-  already sub-3:1 even in light. *Enforced:* page-repair `test/contrast.mjs` recomputes every pair from
-  the token hexes in both themes, **fail-closed** — a `:root` token in no verified pair fails the run.
-  *Partial:* KindredAccess does real luminance math but two hardcoded 3:1 spot-checks only; CIT
-  `tests/unit/a11y-css.test.ts` reads tokens from the `:root` **and** dark blocks and checks 3:1 and
-  4.5:1 in **both** themes — it asserts the dark override exists but not the `color-scheme`
-  declaration, which is the only piece missing. *Unenforced:* `packages/ui`, Keycloak theme, BN (declares `color-scheme`, asserts nothing).
-  (page-repair, 2026-07-13)
-  **Two failure modes a token-hex sweep still misses — both found on bas-website, 2026-07-18:**
-  (a) **A token that is *used but never defined* emits no CSS and fails silently.** `bg-forest-50`,
-  `text-forest-800/900`, `border-forest-200` were never in `@theme`; Tailwind generated nothing, the
-  chips inherited a colour, and dark-on-light still *looked* plausible. Recomputing pairs from the
-  token hexes cannot catch this — the token isn't in the hex table to check. Needs a separate scan:
-  every `text-|bg-|border-<family>-<step>` in source must resolve to a `--color-<family>-<step>`.
-  (b) **Test against *blended* backgrounds, not just the base palette.** Body text on
-  `bg-sage-light/30` computed 3.93:1; the same token on white passes comfortably. Any `/opacity`
-  utility or translucent card is a distinct background that must be alpha-composited before
-  comparing. A white-and-cream-only sweep reported "clean" while this was live.
-  *Enforced:* bas-website `test/contrast.mjs` (36 pairs × 2 themes + the undefined-token scan, alpha
-  blended per theme), wired into `npm run build` — which is *Netlify's* build command, so a
-  regression cannot publish. Verified fail-closed by injecting both regression types.
-  (bas-website, 2026-07-18)
-  **(c) A second theme audits the pair list itself — which is why C4 asks for both.** Adding dark
-  mode to bas-website immediately surfaced a **light-theme** failure that had been live all along
-  and had survived a full design review plus two contrast passes: the logo's white "B" on `#5d8a61`
-  at **3.98:1**. Nobody had listed that pair. A sweep only checks pairs someone remembered; forcing
-  every token through a second theme is what finds the ones nobody wrote down. Corollary for the
-  migration itself: **half a theme is worse than none** — 47% of that site's colour was raw
-  `text-gray-900`/`bg-white`, which structurally cannot flip, so dark mode had to start with a
-  semantic layer (canvas/surface/ink/body/muted/line + accent/**on-accent**) rather than with
-  colours. `text-white` hardcoded on a button is the specific killer: in dark the accent becomes a
-  *light* green and its label must flip to near-black. *Enforced:* the gate fails if any semantic
-  token has no dark value. (bas-website, 2026-07-19)
+- **C4 — color-scheme + contrast.** page-repair's options page declared no `color-scheme`, so contrast
+  held in light but was unverified in dark (a `kbd` border was sub-3:1 even in light). *Enforced:*
+  page-repair `test/contrast.mjs` recomputes every pair from the token hexes in both themes,
+  fail-closed. *Partial:* KindredAccess (two hardcoded 3:1 spot-checks); CIT `a11y-css.test.ts` (both
+  themes, but not the `color-scheme` declaration). *Unenforced:* `packages/ui`, Keycloak theme, BN
+  (declares `color-scheme`, asserts nothing). (page-repair, 2026-07-13)
+  **A token-hex sweep has three blind spots — all found on bas-website, all now gated by its
+  `test/contrast.mjs` (36 pairs × 2 themes, wired into the build command so a regression can't
+  publish):** (a) a token *used but never defined* emits no CSS and fails silently — scan that every
+  `text-|bg-|border-<family>-<step>` resolves to a `--color-` var; (b) `/opacity` backgrounds are
+  distinct pairs — alpha-composite before comparing (body text hit 3.93:1 on a 30% tint, clean on
+  white); (c) a second theme audits the *pair list itself* — adding dark mode surfaced a light-theme
+  logo failure (3.98:1) two prior sweeps had missed, because a sweep only checks pairs someone
+  listed. Corollary: **half a theme is worse than none** — migrate raw `text-gray-*`/`bg-white` to a
+  semantic layer (canvas/surface/ink/…/on-accent) first, or dark mode leaves half the page light;
+  `text-white` on a button is the specific killer (in dark the accent lightens, its label must go
+  near-black). (bas-website, 2026-07-18/19)
 
 ## Identity, OIDC & mobile wrappers
 
