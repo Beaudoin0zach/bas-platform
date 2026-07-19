@@ -4,6 +4,33 @@ Append-only record of things that went wrong, so patterns become visible across 
 
 ---
 
+## Session: 2026-07-19
+
+**Project:** Chronic-Illness-Tracker (a11y-spine fix + landing/privacy voice copy) — style-eval remediation
+
+### Failures
+
+- **Self-inflicted test break via a comment string:** added a CSS comment above `:root` in
+  `globals.css` containing the literal `prefers-color-scheme: dark`. `tests/unit/a11y-css.test.ts`
+  located the dark-theme token block with `css.indexOf('prefers-color-scheme: dark')`, so the split
+  point jumped to my comment, collapsed the light-theme slice to zero tokens, and failed with a
+  misleading `token --control-border not found`. → Diagnosed by `git stash` to confirm the test
+  passed pre-change, then reworded the comment AND hardened the test to key on the full
+  `@media (...)` rule (the `has dark mode support` assertion had the same latent weakness — a comment
+  mention could satisfy it). Lesson: a test that string-matches stylesheet source is fragile to
+  prose; match the full rule, not a bare feature name.
+- **`timeout` prefix on macOS:** ran `timeout 90 bash scripts/platform-status.sh` — GNU `timeout`
+  isn't installed on macOS, exits 127, and a machine hook blocked it (noting the misattribution has
+  cost four prior sessions). → Re-ran without the prefix, using the Bash tool's native `timeout`
+  parameter. Already hook-enforced; no further action.
+- **Three `Edit` "File has not been read yet" errors** editing `en.json`, `es.json`, and
+  `CHANGELOG.md`: attempted edits against files whose fresh state hadn't been Read in-context (they'd
+  been read via `sed`/`grep` in Bash, which doesn't satisfy the Edit read-gate). → Read the target
+  range, then edited. Minor, caught immediately each time, but a repeated pattern: a Bash `sed` view
+  does not register as a Read for Edit's purposes.
+
+---
+
 ## Session: 2026-07-18
 
 **Project:** bas-platform (DO App Platform secrets/DB hardening on benefits-navigator-staging)

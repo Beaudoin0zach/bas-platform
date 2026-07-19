@@ -36,6 +36,16 @@ Gates audited 2026-07-18 by reading the tests; **partials marked**. CIT included
   (`tests/test_assistant_template.py` + `tests/js/assistant.a11y.test.mjs`); KindredAccess has only the
   markup half — no routing test, so the bug C1 exists to catch is untested there. *Unenforced:* Access
   Atlas, Disability Wiki, CIT (verified: no live-region test in `tests/unit/`). (page-repair, 2026-07-13)
+  **Fix the shared primitive, not just the instances.** CIT had already hand-fixed `SymptomForm` and
+  `CheckInForm` (permanently-mounted region, polite/assertive split) — each carrying a comment
+  explaining exactly why — but `ApiForm`, the primitive **8 other entry forms delegate to** (cycle,
+  energy, exposure, food, note, PRN, sleep, stress), still rendered its region conditionally
+  (`{message && <p role="status">}`) and routed success + failure through one polite node. So the
+  defect read as "known and fixed" while most surfaces still failed silently. When a spine fix lands
+  on a hand-written component, grep for the shared form/status primitive and check it has the same
+  shape. Fixed 2026-07-19 (CIT PR #44); the code is now correct but still lacks the routing test that
+  would gate it — and the `color-scheme` half of C4 now *is* gated (`a11y-css.test.ts`, verified to
+  fail without the declaration). (chronic-illness-tracker, 2026-07-19)
 
 - **C2 — streaming announce + focus.** BN's assistant re-announced its response region on every
   streamed token (machine-gunning the screen reader), and the assertive *error* announce left focus
